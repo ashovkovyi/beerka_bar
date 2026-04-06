@@ -1,95 +1,259 @@
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
 :root{
-  --bg:#111;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;
-  --text:#f0ece4;--text2:#8a8070;--text3:#5a5248;
-  --amber:#c8902a;--amber-l:#e8b050;--amber-d:#9a6a18;
-  --border:#2a2520;--green:#5a9a40;
+  --accent:#4FC3F7;--accent2:#81D4FA;--accent3:#B3E5FC;
+  --purple:#CE93D8;--purple2:#E1BEE7;
+  --glass:rgba(255,255,255,0.08);--glass2:rgba(255,255,255,0.12);--glass3:rgba(255,255,255,0.18);
+  --glass-border:rgba(255,255,255,0.18);--glass-border2:rgba(255,255,255,0.28);
+  --text:rgba(255,255,255,0.95);--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.30);
+  --blur:blur(24px);--blur2:blur(40px);
+  --r:16px;--r2:20px;--r3:28px;
 }
-body{font-family:var(--font-sans)}
-.app{background:var(--bg);color:var(--text);min-height:640px;max-width:420px;margin:0 auto;font-size:14px;border-radius:14px;overflow:hidden;border:0.5px solid var(--border)}
+html,body{height:100%;background:#000}
+body{font-family:-apple-system,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:#000;overflow-x:hidden}
 
-.header{background:var(--bg2);padding:16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.logo-wrap{display:flex;flex-direction:column;gap:1px}
-.logo{font-size:17px;font-weight:500;color:var(--amber-l);letter-spacing:0.3px}
-.logo-sub{font-size:11px;color:var(--text2);letter-spacing:0.5px}
-.cart-btn{background:transparent;border:0.5px solid var(--amber-d);color:var(--amber-l);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.15s}
-.cart-btn:hover{background:rgba(200,144,42,0.12)}
-.cart-badge{background:var(--amber);color:#111;border-radius:50%;width:19px;height:19px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+/* Фоновий градієнт */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.55}
+.orb1{width:340px;height:340px;background:radial-gradient(circle,#1565C0,#0D47A1 60%,transparent);top:-60px;left:-80px}
+.orb2{width:300px;height:300px;background:radial-gradient(circle,#4A148C,#6A1B9A 60%,transparent);top:120px;right:-60px}
+.orb3{width:260px;height:260px;background:radial-gradient(circle,#006064,#00838F 60%,transparent);bottom:200px;left:20px}
+.orb4{width:200px;height:200px;background:radial-gradient(circle,#1B5E20,#2E7D32 60%,transparent);bottom:80px;right:30px}
 
-.cats{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;background:var(--bg2);border-bottom:0.5px solid var(--border)}
+.app{position:relative;z-index:1;max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* Header — liquid glass */
+.header{
+  background:rgba(15,15,30,0.45);
+  backdrop-filter:var(--blur2);
+  -webkit-backdrop-filter:var(--blur2);
+  border-bottom:0.5px solid var(--glass-border);
+  padding:52px 20px 14px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
+.logo{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-0.5px;line-height:1}
+.logo span{background:linear-gradient(135deg,var(--accent2),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{font-size:11px;color:var(--text3);letter-spacing:0.3px;margin-top:3px;font-weight:400}
+
+.cart-btn{
+  background:var(--glass2);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  border:0.5px solid var(--glass-border2);
+  color:var(--text);border-radius:22px;
+  padding:8px 16px;font-size:13px;font-weight:500;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  transition:background 0.2s;
+}
+.cart-btn:hover{background:var(--glass3)}
+.cart-badge{
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  color:#fff;border-radius:50%;
+  width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;
+}
+
+/* Categories */
+.cats-wrap{
+  background:rgba(10,10,20,0.35);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  border-bottom:0.5px solid var(--glass-border);
+  padding:12px 16px;
+  position:sticky;top:97px;z-index:9;
+}
+.cats{display:flex;gap:8px;overflow-x:auto}
 .cats::-webkit-scrollbar{display:none}
-.cat-btn{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s}
-.cat-btn:hover{color:var(--text)}
-.cat-btn.active{background:rgba(200,144,42,0.15);color:var(--amber-l);border-color:var(--amber-d)}
+.cat-btn{
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:0.5px solid var(--glass-border);
+  color:var(--text2);
+  padding:7px 18px;border-radius:22px;
+  font-size:13px;font-weight:500;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:all 0.2s;
+}
+.cat-btn.active{
+  background:linear-gradient(135deg,rgba(79,195,247,0.25),rgba(206,147,216,0.25));
+  border-color:rgba(129,212,250,0.4);
+  color:var(--accent2);
+}
 
-.products{padding:14px 16px;display:flex;flex-direction:column;gap:12px;max-height:430px;overflow-y:auto}
-.products::-webkit-scrollbar{width:3px}
-.products::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+/* Products */
+.products{padding:16px;display:flex;flex-direction:column;gap:12px;flex:1}
 
-.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:14px;display:flex;gap:14px;transition:border-color 0.15s}
-.card:hover{border-color:#3a3028}
-.card-icon{width:54px;height:54px;border-radius:10px;background:var(--bg3);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.card{
+  background:var(--glass);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  border:0.5px solid var(--glass-border);
+  border-radius:var(--r2);
+  padding:16px;display:flex;gap:14px;
+  transition:background 0.2s,border-color 0.2s;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.05) 0%,transparent 60%);
+  border-radius:var(--r2);pointer-events:none;
+}
+.card:hover{background:var(--glass2);border-color:var(--glass-border2)}
+
+.card-icon{
+  width:54px;height:54px;border-radius:14px;
+  background:var(--glass2);
+  border:0.5px solid var(--glass-border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;
+  position:relative;overflow:hidden;
+}
+.card-icon::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+}
+
+.card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.card-name{font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
-.card-badges{display:flex;gap:4px;flex-shrink:0}
-.badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
-.b-craft{background:rgba(200,144,42,0.18);color:var(--amber-l)}
-.b-new{background:rgba(90,154,64,0.18);color:#7aba58}
-.b-hot{background:rgba(200,80,60,0.18);color:#e07060}
-.card-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-top:1px}
-.card-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
-.card-style{font-size:11px;color:var(--text3)}
-.tag-abv{font-size:10px;background:var(--bg4);color:var(--text2);padding:2px 6px;border-radius:4px;border:0.5px solid var(--border)}
-.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-.card-price{font-size:15px;font-weight:500;color:var(--amber-l)}
-.card-price small{font-size:11px;color:var(--text2);font-weight:400}
-.card-actions{display:flex;align-items:center;gap:6px}
-.qty-btn{background:var(--bg3);border:0.5px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
-.qty-btn:hover{background:var(--bg4)}
-.qty-num{font-size:14px;font-weight:500;min-width:20px;text-align:center}
-.add-btn{background:rgba(200,144,42,0.15);border:0.5px solid var(--amber-d);color:var(--amber-l);width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1}
-.add-btn:hover{background:rgba(200,144,42,0.25)}
+.card-name{font-size:15px;font-weight:600;color:var(--text);line-height:1.25;letter-spacing:-0.2px}
 
-.cart-panel{background:var(--bg2);border-top:0.5px solid var(--border);padding:14px 16px;display:none}
+.badge{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:600;letter-spacing:0.3px;flex-shrink:0}
+.b-craft{
+  background:linear-gradient(135deg,rgba(79,195,247,0.2),rgba(206,147,216,0.2));
+  color:var(--accent2);border:0.5px solid rgba(79,195,247,0.3);
+}
+.b-new{
+  background:rgba(102,187,106,0.18);color:#A5D6A7;border:0.5px solid rgba(102,187,106,0.3);
+}
+.b-hot{
+  background:rgba(255,138,101,0.18);color:#FFAB91;border:0.5px solid rgba(255,138,101,0.3);
+}
+
+.card-desc{font-size:12px;color:var(--text2);line-height:1.55;font-weight:400}
+.card-meta{display:flex;align-items:center;gap:6px;margin-top:2px}
+.card-style{font-size:11px;color:var(--text3);font-weight:400}
+.tag-abv{
+  font-size:10px;
+  background:rgba(79,195,247,0.12);
+  color:var(--accent);
+  padding:2px 7px;border-radius:8px;
+  border:0.5px solid rgba(79,195,247,0.2);
+  font-weight:500;
+}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.08)}
+.card-price{font-size:17px;font-weight:600;color:var(--text);letter-spacing:-0.3px}
+.card-price small{font-size:11px;color:var(--text3);font-weight:400;letter-spacing:0;margin-left:2px}
+
+.card-actions{display:flex;align-items:center;gap:8px}
+.qty-btn{
+  background:var(--glass2);
+  border:0.5px solid var(--glass-border2);
+  color:var(--text);width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;line-height:1;
+  transition:background 0.15s;
+}
+.qty-btn:hover{background:var(--glass3)}
+.qty-num{font-size:15px;font-weight:600;min-width:22px;text-align:center;color:var(--accent2)}
+.add-btn{
+  background:linear-gradient(135deg,rgba(79,195,247,0.2),rgba(206,147,216,0.2));
+  border:0.5px solid rgba(129,212,250,0.35);
+  color:var(--accent2);width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;line-height:1;
+  transition:all 0.15s;
+}
+.add-btn:hover{background:linear-gradient(135deg,rgba(79,195,247,0.35),rgba(206,147,216,0.35))}
+
+/* Cart */
+.cart-panel{
+  background:rgba(8,8,18,0.6);
+  backdrop-filter:var(--blur2);
+  -webkit-backdrop-filter:var(--blur2);
+  border-top:0.5px solid var(--glass-border);
+  padding:20px;display:none;
+  position:sticky;bottom:0;z-index:10;
+}
 .cart-panel.open{display:block}
-.cart-heading{font-size:14px;font-weight:500;margin-bottom:10px;color:var(--text)}
-.cart-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;color:var(--text2)}
+.cart-heading{font-size:17px;font-weight:600;color:var(--text);letter-spacing:-0.3px;margin-bottom:14px}
+
+.cart-item{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:0.5px solid rgba(255,255,255,0.07);font-size:13px}
 .cart-item:last-child{border-bottom:none}
-.cart-item b{color:var(--text);font-weight:500}
-.cart-sum{display:flex;justify-content:space-between;padding-top:10px;font-size:15px;font-weight:500}
-.cart-sum span:last-child{color:var(--amber-l)}
-.order-btn{width:100%;margin-top:10px;background:var(--amber);color:#111;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:500;cursor:pointer;letter-spacing:0.2px}
-.order-btn:hover{background:var(--amber-l)}
-.order-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
-.empty-cart{text-align:center;color:var(--text2);font-size:13px;padding:8px 0}
-.deposit-note{font-size:11px;color:var(--text2);text-align:center;margin-top:6px}
+.cart-item-name{color:var(--text);font-weight:500}
+.cart-item-qty{font-size:11px;color:var(--text3);margin-left:6px}
+.cart-item-price{color:var(--accent2);font-weight:600;font-size:14px}
+
+.cart-sum{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px;margin-top:4px;border-top:0.5px solid rgba(255,255,255,0.1)}
+.cart-sum-label{font-size:13px;color:var(--text2);font-weight:400}
+.cart-sum-value{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-0.5px}
+
+.order-btn{
+  width:100%;margin-top:14px;
+  background:linear-gradient(135deg,rgba(79,195,247,0.35),rgba(206,147,216,0.35));
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  color:var(--text);
+  border:0.5px solid rgba(129,212,250,0.4);
+  border-radius:var(--r3);
+  padding:15px;font-size:15px;font-weight:600;
+  cursor:pointer;letter-spacing:-0.2px;
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.order-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+  pointer-events:none;
+}
+.order-btn:hover{background:linear-gradient(135deg,rgba(79,195,247,0.5),rgba(206,147,216,0.5))}
+.order-btn:disabled{background:var(--glass);border-color:var(--glass-border);color:var(--text3);cursor:not-allowed}
+.order-btn:disabled::before{display:none}
+
+.deposit-note{font-size:11px;color:var(--text3);text-align:center;margin-top:10px;font-weight:400}
+.empty-cart{text-align:center;color:var(--text3);font-size:13px;padding:6px 0}
 </style>
+
+<div class="bg">
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+  <div class="bg-orb orb4"></div>
+</div>
 
 <div class="app">
   <div class="header">
-    <div class="logo-wrap">
-      <div class="logo">🍺 Крафтова Криниця</div>
-      <div class="logo-sub">розливне пиво · вино · сидр</div>
+    <div>
+      <div class="logo">🍺 <span>Beerka</span> Bar</div>
+      <div class="logo-sub">розливне · вино · сидр</div>
     </div>
     <button class="cart-btn" onclick="toggleCart()">
       Кошик <span class="cart-badge" id="cartCount">0</span>
     </button>
   </div>
 
-  <div class="cats" id="cats"></div>
+  <div class="cats-wrap">
+    <div class="cats" id="cats"></div>
+  </div>
+
   <div class="products" id="products"></div>
 
   <div class="cart-panel" id="cartPanel">
     <div class="cart-heading">Ваше замовлення</div>
     <div id="cartItems"><div class="empty-cart">Кошик порожній</div></div>
-    <div class="cart-sum"><span>Разом:</span><span id="cartTotal">0 грн</span></div>
+    <div class="cart-sum">
+      <span class="cart-sum-label">Разом</span>
+      <span class="cart-sum-value" id="cartTotal">0 грн</span>
+    </div>
     <button class="order-btn" id="orderBtn" onclick="placeOrder()" disabled>Оформити замовлення</button>
     <div class="deposit-note" id="depositNote"></div>
   </div>
@@ -166,14 +330,11 @@ function renderProducts(){
     return`<div class="card" id="card-${p.id}">
       <div class="card-icon">${p.icon}</div>
       <div class="card-body">
-        <div class="card-top">
-          <div class="card-name">${p.name}</div>
-          <div class="card-badges">${badgeHtml}</div>
-        </div>
+        <div class="card-top"><div class="card-name">${p.name}</div>${badgeHtml}</div>
         <div class="card-desc">${p.desc}</div>
         <div class="card-meta"><span class="card-style">${p.meta}</span>${abvHtml}</div>
         <div class="card-footer">
-          <div class="card-price">${p.price} грн <small>/ ${priceLabel}</small></div>
+          <div class="card-price">${p.price} грн<small> / ${priceLabel}</small></div>
           ${cardActionsHtml(p,q)}
         </div>
       </div>
@@ -182,9 +343,7 @@ function renderProducts(){
 }
 
 function setCat(id){activeCat=id;renderCats();renderProducts();}
-
 function allProducts(){return Object.values(products).flat();}
-
 function addItem(id){cart[id]=(cart[id]||0)+1;updateBadge();refreshCard(id);}
 
 function changeQty(id,d){
@@ -200,7 +359,7 @@ function refreshCard(id){
   if(!p||!card)return;
   const footer=card.querySelector('.card-footer');
   const priceLabel=['s1','s2','s3','s4','s5','s6','s7'].includes(id)?'пач.':'л';
-  footer.innerHTML=`<div class="card-price">${p.price} грн <small>/ ${priceLabel}</small></div>${cardActionsHtml(p,cart[id]||0)}`;
+  footer.innerHTML=`<div class="card-price">${p.price} грн<small> / ${priceLabel}</small></div>${cardActionsHtml(p,cart[id]||0)}`;
 }
 
 function updateBadge(){
@@ -219,10 +378,13 @@ function renderCart(){
   el.innerHTML=keys.map(id=>{
     const p=all.find(x=>x.id===id);if(!p)return'';
     const line=p.price*cart[id];sum+=line;
-    return`<div class="cart-item"><span><b>${p.name}</b> × ${cart[id]}</span><span>${line} грн</span></div>`;
+    return`<div class="cart-item">
+      <span><span class="cart-item-name">${p.name}</span><span class="cart-item-qty">× ${cart[id]}</span></span>
+      <span class="cart-item-price">${line} грн</span>
+    </div>`;
   }).join('');
   document.getElementById('cartTotal').textContent=sum+' грн';
-  note.textContent=`Передоплата при оформленні: ${Math.round(sum*0.5)} грн (50%)`;
+  note.textContent=`Передоплата при оформленні — ${Math.round(sum*0.5)} грн (50%)`;
   btn.disabled=false;
 }
 
@@ -237,7 +399,7 @@ function placeOrder(){
   if(!keys.length)return;
   const sum=keys.reduce((a,id)=>{const p=all.find(x=>x.id===id);return a+(p?p.price*cart[id]:0);},0);
   const list=keys.map(id=>{const p=all.find(x=>x.id===id);return p?`${p.name} ×${cart[id]}`:''}).filter(Boolean).join(', ');
-  alert(`✅ Замовлення прийнято!\n\n${list}\n\nСума: ${sum} грн\nПередоплата (50%): ${Math.round(sum*0.5)} грн\n\nМенеджер зв'яжеться для підтвердження.`);
+  alert(`✅ Замовлення прийнято!\n\n${list}\n\nСума: ${sum} грн\nПередоплата: ${Math.round(sum*0.5)} грн\n\nМенеджер зв'яжеться для підтвердження.`);
   cart={};updateBadge();renderProducts();
   document.getElementById('cartPanel').classList.remove('open');
 }
