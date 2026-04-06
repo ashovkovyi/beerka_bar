@@ -1,0 +1,246 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#111;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;
+  --text:#f0ece4;--text2:#8a8070;--text3:#5a5248;
+  --amber:#c8902a;--amber-l:#e8b050;--amber-d:#9a6a18;
+  --border:#2a2520;--green:#5a9a40;
+}
+body{font-family:var(--font-sans)}
+.app{background:var(--bg);color:var(--text);min-height:640px;max-width:420px;margin:0 auto;font-size:14px;border-radius:14px;overflow:hidden;border:0.5px solid var(--border)}
+
+.header{background:var(--bg2);padding:16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.logo-wrap{display:flex;flex-direction:column;gap:1px}
+.logo{font-size:17px;font-weight:500;color:var(--amber-l);letter-spacing:0.3px}
+.logo-sub{font-size:11px;color:var(--text2);letter-spacing:0.5px}
+.cart-btn{background:transparent;border:0.5px solid var(--amber-d);color:var(--amber-l);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.15s}
+.cart-btn:hover{background:rgba(200,144,42,0.12)}
+.cart-badge{background:var(--amber);color:#111;border-radius:50%;width:19px;height:19px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+
+.cats{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;background:var(--bg2);border-bottom:0.5px solid var(--border)}
+.cats::-webkit-scrollbar{display:none}
+.cat-btn{background:var(--bg3);border:0.5px solid var(--border);color:var(--text2);padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.15s}
+.cat-btn:hover{color:var(--text)}
+.cat-btn.active{background:rgba(200,144,42,0.15);color:var(--amber-l);border-color:var(--amber-d)}
+
+.products{padding:14px 16px;display:flex;flex-direction:column;gap:12px;max-height:430px;overflow-y:auto}
+.products::-webkit-scrollbar{width:3px}
+.products::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:14px;display:flex;gap:14px;transition:border-color 0.15s}
+.card:hover{border-color:#3a3028}
+.card-icon{width:54px;height:54px;border-radius:10px;background:var(--bg3);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.card-name{font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
+.card-badges{display:flex;gap:4px;flex-shrink:0}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.b-craft{background:rgba(200,144,42,0.18);color:var(--amber-l)}
+.b-new{background:rgba(90,154,64,0.18);color:#7aba58}
+.b-hot{background:rgba(200,80,60,0.18);color:#e07060}
+.card-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-top:1px}
+.card-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
+.card-style{font-size:11px;color:var(--text3)}
+.tag-abv{font-size:10px;background:var(--bg4);color:var(--text2);padding:2px 6px;border-radius:4px;border:0.5px solid var(--border)}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.card-price{font-size:15px;font-weight:500;color:var(--amber-l)}
+.card-price small{font-size:11px;color:var(--text2);font-weight:400}
+.card-actions{display:flex;align-items:center;gap:6px}
+.qty-btn{background:var(--bg3);border:0.5px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.qty-btn:hover{background:var(--bg4)}
+.qty-num{font-size:14px;font-weight:500;min-width:20px;text-align:center}
+.add-btn{background:rgba(200,144,42,0.15);border:0.5px solid var(--amber-d);color:var(--amber-l);width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1}
+.add-btn:hover{background:rgba(200,144,42,0.25)}
+
+.cart-panel{background:var(--bg2);border-top:0.5px solid var(--border);padding:14px 16px;display:none}
+.cart-panel.open{display:block}
+.cart-heading{font-size:14px;font-weight:500;margin-bottom:10px;color:var(--text)}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px;color:var(--text2)}
+.cart-item:last-child{border-bottom:none}
+.cart-item b{color:var(--text);font-weight:500}
+.cart-sum{display:flex;justify-content:space-between;padding-top:10px;font-size:15px;font-weight:500}
+.cart-sum span:last-child{color:var(--amber-l)}
+.order-btn{width:100%;margin-top:10px;background:var(--amber);color:#111;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:500;cursor:pointer;letter-spacing:0.2px}
+.order-btn:hover{background:var(--amber-l)}
+.order-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+.empty-cart{text-align:center;color:var(--text2);font-size:13px;padding:8px 0}
+.deposit-note{font-size:11px;color:var(--text2);text-align:center;margin-top:6px}
+</style>
+
+<div class="app">
+  <div class="header">
+    <div class="logo-wrap">
+      <div class="logo">🍺 Крафтова Криниця</div>
+      <div class="logo-sub">розливне пиво · вино · сидр</div>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">
+      Кошик <span class="cart-badge" id="cartCount">0</span>
+    </button>
+  </div>
+
+  <div class="cats" id="cats"></div>
+  <div class="products" id="products"></div>
+
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-heading">Ваше замовлення</div>
+    <div id="cartItems"><div class="empty-cart">Кошик порожній</div></div>
+    <div class="cart-sum"><span>Разом:</span><span id="cartTotal">0 грн</span></div>
+    <button class="order-btn" id="orderBtn" onclick="placeOrder()" disabled>Оформити замовлення</button>
+    <div class="deposit-note" id="depositNote"></div>
+  </div>
+</div>
+
+<script>
+const cats=[
+  {id:'beer',label:'🍺 Пиво'},
+  {id:'wine',label:'🍷 Вино'},
+  {id:'cider',label:'🍏 Сидр'},
+  {id:'snacks',label:'🥜 Снеки'},
+];
+const products={
+  beer:[
+    {id:'b1',icon:'🍺',name:'Варшавське Живе',desc:'Легкий лагер з м\'яким солодовим смаком і мінімальною гіркотою. Класика на щодень.',meta:'Лагер · Польща',abv:'5.2%',price:85,badge:''},
+    {id:'b2',icon:'🍺',name:'Правда Львів IPA',desc:'Насичений хоп-характер з цитрусовими та тропічними нотами. Яскраво гірке.',meta:'West Coast IPA · Україна',abv:'6.8%',price:95,badge:'hot'},
+    {id:'b3',icon:'🍺',name:'Бочкове темне',desc:'Дункель зі смаком темного хліба, карамелі та легкої підсмаженості. Оксамитове.',meta:'Дункель · Чехія',abv:'4.9%',price:80,badge:''},
+    {id:'b4',icon:'🍺',name:'Paulaner Weizen',desc:'Баварське пшеничне з банановими та гвоздиковими ефірами. Освіжає і насичує.',meta:'Пшеничне · Німеччина',abv:'5.5%',price:110,badge:'craft'},
+    {id:'b5',icon:'🍺',name:'Hop Hey Blanche',desc:'Бельгійське біле з коріандром і цедрою апельсина. Легке і ароматне.',meta:'Witbier · Україна',abv:'4.5%',price:90,badge:'new'},
+    {id:'b6',icon:'🍺',name:'Козацьке Золоте',desc:'Класичний лагер із зернистим солодовим смаком. Чисте, освіжаюче, без зайвого.',meta:'Lager · Україна',abv:'4.8%',price:75,badge:''},
+    {id:'b7',icon:'🍺',name:'Velvet Stout',desc:'Ірландський стаут з кавовими та шоколадними нотами. Густий, але питний.',meta:'Dry Stout · Ірландія',abv:'4.3%',price:100,badge:'craft'},
+  ],
+  wine:[
+    {id:'w1',icon:'🍷',name:'Шабо Класичне',desc:'Шардоне з нотами зелених яблук і легкою мінеральністю. Сухе, збалансоване.',meta:'Шардоне · Шабо, Україна',abv:'12.5%',price:220,badge:''},
+    {id:'w2',icon:'🍷',name:'Marani Алазані',desc:'Ніжне напівсолодке з фруктовим букетом: персик, абрикос, квіткові ноти.',meta:'Купаж · Кахетія, Грузія',abv:'11%',price:260,badge:'new'},
+    {id:'w3',icon:'🍷',name:'Aligoté Золота Балка',desc:'Легке сухе з освіжаючою кислинкою і ароматом білих квітів.',meta:'Aligoté · Крим, Україна',abv:'11.5%',price:180,badge:''},
+    {id:'w4',icon:'🍷',name:'Inkerman Каберне',desc:'Повнотіле сухе червоне з нотами темних ягід, тютюну і дубу.',meta:'Каберне Совіньйон · Україна',abv:'13%',price:200,badge:''},
+    {id:'w5',icon:'🍷',name:'Château Vartely',desc:'Елегантне молдовське напівсухе з ягідним фруктовим букетом.',meta:'Купаж · Молдова',abv:'12%',price:240,badge:'craft'},
+    {id:'w6',icon:'🍷',name:'Тераса Рожеве',desc:'Делікатне рожеве з нотами суниці та грейпфрута. Ідеал для літнього вечора.',meta:'Совіньйон Блан · Україна',abv:'12%',price:190,badge:'new'},
+  ],
+  cider:[
+    {id:'c1',icon:'🍏',name:'Somersby Apple',desc:'Класичний яблучний сидр — свіжий, солодкуватий, освіжаючий. Легко п\'ється.',meta:'Яблучний · Данія',abv:'4.5%',price:65,badge:''},
+    {id:'c2',icon:'🍏',name:'Bohemia Груша',desc:'М\'який грушевий сидр із соковитим фруктовим смаком і легкою солодкістю.',meta:'Грушевий · Чехія',abv:'4.2%',price:70,badge:'new'},
+    {id:'c3',icon:'🍏',name:'Karhu Ягідний',desc:'Фінський сидр із ягідним міксом: чорниця, смородина, журавлина.',meta:'Ягідний · Фінляндія',abv:'4.7%',price:72,badge:''},
+    {id:'c4',icon:'🍏',name:'Cidre Royal Brut',desc:'Сухий французький сидр з характером: мінеральний, хрусткий, майже як шампанське.',meta:'Брют · Нормандія, Франція',abv:'5.5%',price:95,badge:'craft'},
+    {id:'c5',icon:'🍏',name:'Happy Joe Лемон',desc:'Освіжаючий лимонний сидр з приємною кислинкою і ніжним цитрусовим ароматом.',meta:'Лимонний · Фінляндія',abv:'4.0%',price:68,badge:''},
+    {id:'c6',icon:'🍏',name:'Frutteto Персик',desc:'Соковитий персиковий сидр — солодкий, ароматний, легкий. Підходить для новачків.',meta:'Персиковий · Польща',abv:'3.8%',price:62,badge:'new'},
+    {id:'c7',icon:'🍏',name:'Craft Cider Малина',desc:'Українська малина, натуральний сік. Яскравий ягідний смак, легка кислинка.',meta:'Малиновий · Україна',abv:'4.5%',price:75,badge:'craft'},
+  ],
+  snacks:[
+    {id:'s1',icon:'🥜',name:'Арахіс смажений',desc:'Солоний смажений арахіс. Хрусткий, ситний, найкращий друг пива.',meta:'Солоний · 150г',price:45,badge:''},
+    {id:'s2',icon:'🍞',name:'Сухарики Lviv',desc:'Часникові пшеничні сухарики зі спеціями. Хрумтять, не розсипаються.',meta:'Часниковий · 100г',price:38,badge:''},
+    {id:'s3',icon:'🌽',name:'Снеки кукурудзяні',desc:'Гострі кукурудзяні снеки з паприкою та чілі. Відчутне гостре пекло.',meta:'Гострі · 120г',price:42,badge:'hot'},
+    {id:'s4',icon:'🥔',name:'Чіпси Lays',desc:'Тонкі картопляні чіпси з паприкою. Легкі і хрусткі, зупинитись неможливо.',meta:'Паприка · 133г',price:55,badge:''},
+    {id:'s5',icon:'🐟',name:'В\'ялена риба',desc:'Лящ або окунь власного в\'ялення. Щільний, солоний, ідеально до пива.',meta:'Лящ · 150г',price:95,badge:'hot'},
+    {id:'s6',icon:'🧀',name:'Нарізка сирна',desc:'Гауда + Едам, слайси. Ніжний вершковий смак. Добре до вина і сидру.',meta:'Гауда + Едам · 200г',price:120,badge:''},
+    {id:'s7',icon:'🦑',name:'Кальмар сушений',desc:'Сушені смужки кальмара з легким сольовим смаком. Морська закуска №1.',meta:'Смужки · 100г',price:85,badge:''},
+  ],
+};
+
+let activeCat='beer',cart={};
+
+function renderCats(){
+  document.getElementById('cats').innerHTML=cats.map(c=>
+    `<button class="cat-btn${c.id===activeCat?' active':''}" onclick="setCat('${c.id}')">${c.label}</button>`
+  ).join('');
+}
+
+function cardActionsHtml(p,q){
+  return q>0
+    ?`<div class="card-actions"><button class="qty-btn" onclick="changeQty('${p.id}',-1)">−</button><span class="qty-num">${q}</span><button class="qty-btn" onclick="changeQty('${p.id}',1)">+</button></div>`
+    :`<div class="card-actions"><button class="add-btn" onclick="addItem('${p.id}')">+</button></div>`;
+}
+
+function renderProducts(){
+  const items=products[activeCat]||[];
+  document.getElementById('products').innerHTML=items.map(p=>{
+    const q=cart[p.id]||0;
+    const bLabel={craft:'Craft',new:'Нове',hot:'Топ'}[p.badge]||'';
+    const bClass={craft:'b-craft',new:'b-new',hot:'b-hot'}[p.badge]||'';
+    const badgeHtml=bLabel?`<span class="badge ${bClass}">${bLabel}</span>`:'';
+    const abvHtml=p.abv?`<span class="tag-abv">${p.abv}</span>`:'';
+    const priceLabel=activeCat==='snacks'?'пач.':'л';
+    return`<div class="card" id="card-${p.id}">
+      <div class="card-icon">${p.icon}</div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">${p.name}</div>
+          <div class="card-badges">${badgeHtml}</div>
+        </div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-meta"><span class="card-style">${p.meta}</span>${abvHtml}</div>
+        <div class="card-footer">
+          <div class="card-price">${p.price} грн <small>/ ${priceLabel}</small></div>
+          ${cardActionsHtml(p,q)}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setCat(id){activeCat=id;renderCats();renderProducts();}
+
+function allProducts(){return Object.values(products).flat();}
+
+function addItem(id){cart[id]=(cart[id]||0)+1;updateBadge();refreshCard(id);}
+
+function changeQty(id,d){
+  cart[id]=(cart[id]||0)+d;
+  if(cart[id]<=0)delete cart[id];
+  updateBadge();refreshCard(id);
+  if(document.getElementById('cartPanel').classList.contains('open'))renderCart();
+}
+
+function refreshCard(id){
+  const p=allProducts().find(x=>x.id===id);
+  const card=document.getElementById('card-'+id);
+  if(!p||!card)return;
+  const footer=card.querySelector('.card-footer');
+  const priceLabel=['s1','s2','s3','s4','s5','s6','s7'].includes(id)?'пач.':'л';
+  footer.innerHTML=`<div class="card-price">${p.price} грн <small>/ ${priceLabel}</small></div>${cardActionsHtml(p,cart[id]||0)}`;
+}
+
+function updateBadge(){
+  document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,b)=>a+b,0);
+}
+
+function renderCart(){
+  const all=allProducts(),keys=Object.keys(cart),el=document.getElementById('cartItems');
+  const btn=document.getElementById('orderBtn'),note=document.getElementById('depositNote');
+  if(!keys.length){
+    el.innerHTML='<div class="empty-cart">Кошик порожній</div>';
+    document.getElementById('cartTotal').textContent='0 грн';
+    note.textContent='';btn.disabled=true;return;
+  }
+  let sum=0;
+  el.innerHTML=keys.map(id=>{
+    const p=all.find(x=>x.id===id);if(!p)return'';
+    const line=p.price*cart[id];sum+=line;
+    return`<div class="cart-item"><span><b>${p.name}</b> × ${cart[id]}</span><span>${line} грн</span></div>`;
+  }).join('');
+  document.getElementById('cartTotal').textContent=sum+' грн';
+  note.textContent=`Передоплата при оформленні: ${Math.round(sum*0.5)} грн (50%)`;
+  btn.disabled=false;
+}
+
+function toggleCart(){
+  const p=document.getElementById('cartPanel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open'))renderCart();
+}
+
+function placeOrder(){
+  const all=allProducts(),keys=Object.keys(cart);
+  if(!keys.length)return;
+  const sum=keys.reduce((a,id)=>{const p=all.find(x=>x.id===id);return a+(p?p.price*cart[id]:0);},0);
+  const list=keys.map(id=>{const p=all.find(x=>x.id===id);return p?`${p.name} ×${cart[id]}`:''}).filter(Boolean).join(', ');
+  alert(`✅ Замовлення прийнято!\n\n${list}\n\nСума: ${sum} грн\nПередоплата (50%): ${Math.round(sum*0.5)} грн\n\nМенеджер зв'яжеться для підтвердження.`);
+  cart={};updateBadge();renderProducts();
+  document.getElementById('cartPanel').classList.remove('open');
+}
+
+renderCats();renderProducts();
+</script>
